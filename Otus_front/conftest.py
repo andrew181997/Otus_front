@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.service import Service as ChromiumService
 from selenium.webdriver.firefox.options import Options as FFOptions
 from selenium.webdriver.firefox.service import Service as FFService
 
-url = "http://192.168.0.101:8081"
+url = "http://192.168.0.100:8081"
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome", help="Выбор браузера: chrome, firefox, safari")
     parser.addoption("--url", action="store", default="http://192.168.0.101:8081", help="URL для тестирования")
