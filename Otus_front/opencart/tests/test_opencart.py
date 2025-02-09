@@ -1,13 +1,13 @@
 import time
 import pytest
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from opencart.main_page import MainPageLocators, MainPage
 from opencart.catalog_page_elements import CatalogPageLocators
 from opencart.product_card_element import CardPageLocators
 from opencart.admin_page_elements import AdminPageLocators, AdminPage
-from opencart.registration_page_elements import RegPageLocators
+from opencart.registration_page_elements import RegPageLocators, RegPage
+from selenium.common.exceptions import NoSuchElementException
 
 
 @pytest.mark.parametrize("element_name, locator", [
@@ -110,14 +110,16 @@ password = "bitnami"
 
 
 def test_login_logout(browser):
+    """Тест проверяет логин и разлогин админа ."""
     admin_page = AdminPage(browser)  # Передаем браузер в объект класса
-    admin_page.open_admin_page("http://192.168.0.101:8081/administration/")
+    admin_page.open_admin_page()
     admin_page.login(username, password)
     assert admin_page.is_logged_in(), "Логин не выполнен!"
     admin_page.logout()
     assert admin_page.is_logged_out(), "Разлогин не выполнен!"
 
 def test_add_to_cart_new(browser):
+    """Тест проверяет добавление товара в корзину ."""
     # Инициализация страницы
     main_page = MainPage(browser)
     # Шаг 1: Получить случайный товар
@@ -149,7 +151,7 @@ def test_change_currency(browser):
 
 
 def test_change_currency_catalog(browser):
-    """Тест проверяет, что выбранная валюта соответствует валюте цены товара на главной ."""
+    """Тест проверяет, что выбранная валюта соответствует валюте цены товара в каталоге ."""
 
     main_page = MainPage(browser)
     # Выбираем случайную валюту
@@ -162,3 +164,62 @@ def test_change_currency_catalog(browser):
         assert price[-1] == selected_currency, f"Ожидаемая валюта: {selected_currency}, фактическая валюта: {price[0]}"
     else:
         assert price[0] == selected_currency , f"Ожидаемая валюта: {selected_currency}, фактическая валюта: {price[0]}"
+
+
+
+
+
+def test_add_product_in_catalog(browser):
+    admin_page = AdminPage(browser)
+    """Основной тест: добавление продукта в каталог и проверка."""
+
+    product_name = "TEST_PHONE1"
+    # открываем страницу логина админа
+    admin_page.open_admin_page()
+    # логинимся
+    admin_page.login(username, password)
+    # переходим в каталог
+    admin_page.navigate_to_product_catalog()
+    # создаем новый товар
+    admin_page.add_new_product(product_name)
+    # находим созданный товар в каталоге
+    result = admin_page.search_product_added(product_name)
+    assert product_name in result
+
+
+def test_delete_product(browser):
+    """Тест проверяет удаление продукта из админки ."""
+    admin_page = AdminPage(browser)
+    product_name = "TEST_PHONE1"
+    # открываем страницу логина админа
+    admin_page.open_admin_page()
+    # логинимся
+    admin_page.login(username, password)
+    # переходим в каталог
+    admin_page.navigate_to_product_catalog()
+    # создаем новый товар
+    admin_page.add_new_product(product_name)
+    # поиск товара по фильтру
+    admin_page.search_product_added(product_name)
+    # удаление товара
+    admin_page.delete_product()
+    # повторный поиск что бы проверить что товара нет
+    admin_page.search_product_added(product_name)
+    # проверяем что не можем найти карточку товара на странице
+    try:
+        browser.find_element(AdminPageLocators.PRODUCT_CARD)
+        pytest.fail("Товар не удален")
+    except NoSuchElementException:
+        pass
+def test_registration_member(browser):
+    """Тест проверяет регистрацию обычного пользователя ."""
+    reg_page = RegPage(browser)
+    # удаление товара
+    reg_page.open_page_registartion()
+    reg_page.rigistration_member()
+    time.sleep(1)
+    h1_element = WebDriverWait(browser, 4).until(
+        EC.visibility_of_element_located(RegPageLocators.CHECK_REGISTRATION_BANNER))
+    time.sleep(3)
+    assert h1_element.text =="Your Account Has Been Created!"
+

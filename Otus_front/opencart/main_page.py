@@ -5,6 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 
+
+
 class MainPageLocators:
     CART_ICON = (By.CLASS_NAME, "fa-cart-shopping")
     LOGO = (By.ID, "logo")
@@ -18,9 +20,10 @@ class MainPageLocators:
     TABLE_CURRENCY = (By.XPATH, '//ul[@class="dropdown-menu show"]')
 
 
-class MainPage:
+class MainPage():
     def __init__(self, browser):
         self.browser = browser
+
 
     def get_random_product(self):
         """Получает случайный товар на главной странице."""
@@ -75,7 +78,6 @@ class MainPage:
         random_item = random.choice(dropdown_items)
         selected_currency = random_item.text[0]  # Первый символ текста (например, "$" или "€")
         random_item.click()
-        time.sleep(1)
         return selected_currency
 
     def get_product_price(self):
@@ -96,4 +98,3 @@ class MainPage:
             EC.element_to_be_clickable((By.CSS_SELECTOR, "a.see-all[href*='desktops']"))  # Ожидает кнопку перехода
         )
         show_all_link.click()
-        time.sleep(2)  # Ждём загрузки страницы
