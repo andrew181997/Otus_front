@@ -1,7 +1,10 @@
-from selenium.common import TimeoutException
+import time
+
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
+from opencart.main_page import MainPage
 
 
 
@@ -31,42 +34,19 @@ class AdminPageLocators:
 
 
 
-class AdminPage:
-    def __init__(self, browser):
-        self.browser = browser
-
-    def wait_and_click(self, locator):
-        """Ожидает появления элемента и кликает по нему."""
-        element = WebDriverWait(self.browser, 5).until(
-            EC.visibility_of_element_located(locator)
-        )
-        element.click()
-        return element
-
-    def wait_and_send_keys(self, locator, text):
-        """Ожидает появления элемента и вводит текст."""
-        element = WebDriverWait(self.browser, 5).until(
-            EC.visibility_of_element_located(locator)
-        )
-        element.send_keys(text)
-        return element
-
-    def wait_and_get_text(self, locator):
-        """Ожидает появления элемента и возвращает его текст."""
-        element = WebDriverWait(self.browser, 5).until(
-            EC.visibility_of_element_located(locator)
-        )
-        return element.text
-
+class AdminPage(MainPage):
 
 
     def open_admin_page(self):
+        self.logger.info("Открытие страницы администратора")
         self.browser.get("http://192.168.0.101:8081/administration")
 
     def login(self, username, password):
+        self.logger.info("Попытка входа в админ-панель")
         self.wait_and_send_keys(AdminPageLocators.INPUT_USER_NAME, username)
         self.wait_and_send_keys(AdminPageLocators.INPUT_PASSWORD, password)
         self.wait_and_click(AdminPageLocators.BUTTON_LOGIN)
+        self.logger.info("Авторизация выполнена")
 
 
     def is_logged_in(self):
@@ -74,34 +54,38 @@ class AdminPage:
             WebDriverWait(self.browser, 3).until(
                 EC.visibility_of_element_located((AdminPageLocators.BUTTON_LOGOUT))
             )
+            self.logger.info("Пользователь авторизован")
             return True
         except:
             return False
 
     def logout(self):
+        self.logger.info("Выход из системы")
         button_logout = WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located((AdminPageLocators.BUTTON_LOGOUT))
         )
         button_logout.click()
 
     def is_logged_out(self):
+
         try:
             WebDriverWait(self.browser, 3).until(
                 EC.visibility_of_element_located((AdminPageLocators.INPUT_USER_NAME))
             )
+            self.logger.info("Пользователь вышел из системы")
             return True
         except:
             return False
 
     def navigate_to_product_catalog(self):
         """Переход в каталог продуктов."""
+        self.logger.info("Переход в каталог продуктов")
         self.wait_and_click(AdminPageLocators.CATALOG)
         self.wait_and_click(AdminPageLocators.PRODUCTS)
 
     def add_new_product(self, product_name):
         """Добавление нового продукта."""
-
-        # Добавление продукта
+        self.logger.info(f"Добавление нового продукта: {product_name}")
         self.wait_and_click(AdminPageLocators.ADD_PRODUCT)
 
         # Ввод названия продукта
@@ -115,14 +99,13 @@ class AdminPage:
         # Переход на вкладку SEO
         self.wait_and_click(AdminPageLocators.SEO_PRODUCT)
         self.wait_and_send_keys(AdminPageLocators.INPUT_SEO, product_name)
-
-        # Сохранение продукта
         self.wait_and_click(AdminPageLocators.BUTTON_SAVE_PRODUCT)
-
+        self.logger.info("Продукт успешно добавлен")
 
 
     def search_product_added(self, product_name):
         """Поиск продукта."""
+        self.logger.info(f"Поиск продукта: {product_name}")
          #Попытка нажать кнопку "Назад", если она есть
         try:
                 self.wait_and_click(AdminPageLocators.BUTTON_BACK)
@@ -134,12 +117,35 @@ class AdminPage:
         self.wait_and_click(AdminPageLocators.BUTTON_FILTER)
         # Получение текста карточки продукта
         product_text = self.wait_and_get_text(AdminPageLocators.PRODUCT_CARD)
-
+        self.logger.info(f"Найден продукт с текстом: {product_text}")
         return product_text
+
+
 
     def delete_product(self):
         """Удаление продукта с подтверждением."""
+        self.logger.info("Удаление продукта")
         self.wait_and_click(AdminPageLocators.CHECK_BOX_CARD)
         self.wait_and_click(AdminPageLocators.BUTTON_DELETE_PRODUCT)
         alert = self.browser.switch_to.alert
         alert.accept()
+        input = self.browser.find_element(By.ID, 'input-name')
+        input.clear()
+        time.sleep(4)
+        self.logger.info("Продукт успешно удален")
+
+    def assert_text_not_visible(self, text, selector):
+        """
+        Проверяет, что указанный текст не отображается внутри элемента, найденного по селектору.
+
+        :param text: Текст, который не должен отображаться.
+        :param selector: Селектор элемента, в котором проверяется текст.
+        """
+        try:
+            # Ожидаем, что текст не появится в элементе
+            WebDriverWait(self.browser, 5).until_not(
+                EC.text_to_be_present_in_element(selector, text)
+            )
+            time.sleep(4)
+        except Exception as e:
+            raise AssertionError(f"Текст '{text}' найден в элементе с селектором '{selector}'")
