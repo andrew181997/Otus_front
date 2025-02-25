@@ -1,5 +1,6 @@
 import time
 import pytest
+import allure
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from opencart.main_page import MainPageLocators, MainPage
@@ -7,7 +8,7 @@ from opencart.catalog_page_elements import CatalogPageLocators
 from opencart.product_card_element import CardPageLocators
 from opencart.admin_page_elements import AdminPageLocators, AdminPage
 from opencart.registration_page_elements import RegPageLocators, RegPage
-from selenium.common.exceptions import NoSuchElementException
+
 
 
 @pytest.mark.parametrize("element_name, locator", [
@@ -18,6 +19,7 @@ from selenium.common.exceptions import NoSuchElementException
     ("Carousel Banner", MainPageLocators.CAROUSEL_BANNER),
     ("Search", MainPageLocators.SEARCH),
 ])
+@allure.title("Отображение элементов главной страницы")
 def test_check_element_visibility_home(browser, element_name, locator):
     """Проверяет, что основные элементы главной страницы отображаются."""
     browser.get("http://192.168.0.101:8081/")
@@ -35,6 +37,7 @@ def test_check_element_visibility_home(browser, element_name, locator):
     ("Button home", CatalogPageLocators.BUTTON_HOME),
     ("Players", CatalogPageLocators.PLAYERS_IN_LEFT_LIST),
 ])
+@allure.title("Отображение элементов страницы каталога")
 def test_check_element_visibility_catalog(browser, element_name, locator):
     """Проверяет, что элементы каталога отображаются на странице."""
     browser.get("http://192.168.0.101:8081/en-gb/catalog/desktops")
@@ -54,6 +57,7 @@ def test_check_element_visibility_catalog(browser, element_name, locator):
     ("Add to wish list", CardPageLocators.ADD_TO_WISH_LIST),
     ("Button cart", CardPageLocators.BUTTON_CART),
 ])
+@allure.title("Отображение элементов карточки товара")
 def test_check_element_visibility_product_card(browser, element_name, locator):
     """Проверяет, что элементы карточки товара отображаются на странице."""
     browser.get("http://192.168.0.101:8081/en-gb/product/desktops/apple-cinema")
@@ -71,6 +75,7 @@ def test_check_element_visibility_product_card(browser, element_name, locator):
     ("Input password", AdminPageLocators.INPUT_PASSWORD),
     ("Button login", AdminPageLocators.BUTTON_LOGIN),
 ])
+@allure.title("Отображение элементов страницы логина админа")
 def test_check_element_visibility_admin(browser, element_name, locator):
     """Проверяет, что элементы страницы авторизации админ-панели отображаются."""
     browser.get("http://192.168.0.101:8081/administration/")
@@ -92,6 +97,7 @@ def test_check_element_visibility_admin(browser, element_name, locator):
     ("Button registration", RegPageLocators.BUTTON_REG),
     ("Column right", RegPageLocators.COLUMN_RIGHT),
 ])
+@allure.title("Отображение элементов страницы регистрации")
 def test_check_element_visibility_reg(browser, element_name, locator):
     """Проверяет, что элементы формы регистрации отображаются на странице."""
     browser.get("http://192.168.0.101:8081/index.php?route=account/register")
@@ -108,58 +114,58 @@ admin_url = "http://192.168.0.101:8081/administration/"
 username = "user"
 password = "bitnami"
 
-
+@allure.title("Логин и разлогин админа")
 def test_login_logout(browser):
     """Тест проверяет логин и разлогин админа ."""
-    admin_page = AdminPage(browser)  # Передаем браузер в объект класса
-    admin_page.open_admin_page()
-    admin_page.login(username, password)
+    admin_page = AdminPage(browser)
+    with allure.step("Открываем страницу авторизации администратора"):
+        admin_page.open_admin_page()
+    with allure.step("Логинимся админом"):
+        admin_page.login(username, password)
     assert admin_page.is_logged_in(), "Логин не выполнен!"
-    admin_page.logout()
+    with allure.step("Разлогиниваемся админом"):
+        admin_page.logout()
     assert admin_page.is_logged_out(), "Разлогин не выполнен!"
-
+@allure.title("Добавление товара в корзину")
 def test_add_to_cart_new(browser):
     """Тест проверяет добавление товара в корзину ."""
-    # Инициализация страницы
     main_page = MainPage(browser)
-    # Шаг 1: Получить случайный товар
-    random_product = main_page.get_random_product()
-    # Шаг 2: Получить ссылку на товар
-    href_value = main_page.get_product_href(random_product)
-    # Шаг 3: Добавить товар в корзину
-    main_page.add_product_to_cart(random_product)
-    # Шаг 4: Перейти в корзину
-    main_page.go_to_cart()
-    # Шаг 5: Проверить, что товар есть в корзине
-    main_page.check_product_in_cart(href_value)
+    with allure.step("Получаем случайный товар"):
+        random_product = main_page.get_random_product()
+    with allure.step("Получаем ссылку на товар"):
+        href_value = main_page.get_product_href(random_product)
+    with allure.step("добавляем товар в корзину"):
+        main_page.add_product_to_cart(random_product)
+    with allure.step("Переходим в корзину"):
+        main_page.go_to_cart()
+    with allure.step("Проверка что товар есть в корзине"):
+        main_page.check_product_in_cart(href_value)
 
 
-
+@allure.title("Выбранная валюта соответствует валюте цены товара на главной")
 def test_change_currency(browser):
     """Тест проверяет, что выбранная валюта соответствует валюте цены товара на главной ."""
     main_page = MainPage(browser)
-    # Выбираем случайную валюту
-    selected_currency = main_page.select_random_currency()
-    time.sleep(3)
-    # Получаем цену товара
-    price = main_page.get_product_price()
+    with allure.step("Выбираем случайную валюту"):
+        selected_currency = main_page.select_random_currency()
+    with allure.step("Получаем цену и валюту товара"):
+        price = main_page.get_product_price()
     if selected_currency == "€":
         assert price[-1] == selected_currency,f"Ожидаемая валюта: {selected_currency}, фактическая валюта: {price[0]}"
     else:
         assert price[0] == selected_currency, f"Ожидаемая валюта: {selected_currency}, фактическая валюта: {price[0]}"
 
 
-
+@allure.title("Выбранная валюта соответствует валюте цены товара в каталоге")
 def test_change_currency_catalog(browser):
     """Тест проверяет, что выбранная валюта соответствует валюте цены товара в каталоге ."""
-
     main_page = MainPage(browser)
-    # Выбираем случайную валюту
-    selected_currency = main_page.select_random_currency()
-    # Переходим в каталог
-    main_page.navigate_to_desktops_catalog()
-    # Записываем в переменную цену рандомного товара
-    price = main_page.get_product_price()
+    with allure.step("Выбираем случайную валюту"):
+        selected_currency = main_page.select_random_currency()
+    with allure.step("Переходим в каталог"):
+        main_page.navigate_to_desktops_catalog()
+    with allure.step("Получаем цену и валюту товара"):
+        price = main_page.get_product_price()
     if selected_currency == "€":
         assert price[-1] == selected_currency, f"Ожидаемая валюта: {selected_currency}, фактическая валюта: {price[0]}"
     else:
@@ -168,56 +174,50 @@ def test_change_currency_catalog(browser):
 
 
 
-
+@allure.title("Создание нового продукта админом")
 def test_add_product_in_catalog(browser):
+    """Тест проверяет создание нового продукта администратором."""
     admin_page = AdminPage(browser)
-    """Основной тест: добавление продукта в каталог и проверка."""
-
     product_name = "TEST_PHONE1"
-    # открываем страницу логина админа
-    admin_page.open_admin_page()
-    # логинимся
-    admin_page.login(username, password)
-    # переходим в каталог
-    admin_page.navigate_to_product_catalog()
-    # создаем новый товар
-    admin_page.add_new_product(product_name)
-    # находим созданный товар в каталоге
-    result = admin_page.search_product_added(product_name)
+    with allure.step("Открываем страницу авторизации администратора"):
+        admin_page.open_admin_page()
+    with allure.step("Логинимся админом"):
+        admin_page.login(username, password)
+    with allure.step("Переходим в каталог администратора"):
+        admin_page.navigate_to_product_catalog()
+    with allure.step("Создаем новый товар"):
+        admin_page.add_new_product(product_name)
+    with allure.step("находим созданный товар в каталоге"):
+        result = admin_page.search_product_added(product_name)
     assert product_name in result
 
-
+@allure.title("Удаление продукта из админки")
 def test_delete_product(browser):
     """Тест проверяет удаление продукта из админки ."""
     admin_page = AdminPage(browser)
     product_name = "TEST_PHONE1"
-    # открываем страницу логина админа
-    admin_page.open_admin_page()
-    # логинимся
-    admin_page.login(username, password)
-    # переходим в каталог
-    admin_page.navigate_to_product_catalog()
-    # создаем новый товар
-    admin_page.add_new_product(product_name)
-    # поиск товара по фильтру
-    admin_page.search_product_added(product_name)
-    # удаление товара
-    admin_page.delete_product()
-    # повторный поиск что бы проверить что товара нет
-    admin_page.search_product_added(product_name)
-    # проверяем что не можем найти карточку товара на странице
-    try:
-        browser.find_element(AdminPageLocators.PRODUCT_CARD)
-        pytest.fail("Товар не удален")
-    except NoSuchElementException:
-        pass
+    with allure.step("Открываем страницу авторизации администратора"):
+        admin_page.open_admin_page()
+    with allure.step("Логинимся админом"):
+        admin_page.login(username, password)
+    with allure.step("Переходим в каталог администратора"):
+        admin_page.navigate_to_product_catalog()
+    with allure.step("Создаем новый товар"):
+        admin_page.add_new_product(product_name)
+    with allure.step("Находим товар через фильтр"):
+        admin_page.search_product_added(product_name)
+    with allure.step("Удаляем товар"):
+        admin_page.delete_product()
+    with allure.step("Проверяем что не можем найти карточку товара на странице"):
+        admin_page.assert_text_not_visible(product_name, AdminPageLocators.PRODUCT_CARD)
+@allure.title("Регистрация пользователя")
 def test_registration_member(browser):
     """Тест проверяет регистрацию обычного пользователя ."""
     reg_page = RegPage(browser)
-    # удаление товара
-    reg_page.open_page_registartion()
-    reg_page.rigistration_member()
-    time.sleep(1)
+    with allure.step("Открываем страницу регситрации пользователя"):
+        reg_page.open_page_registartion()
+    with allure.step("Регаем пользователя"):
+        reg_page.rigistration_member()
     h1_element = WebDriverWait(browser, 4).until(
         EC.visibility_of_element_located(RegPageLocators.CHECK_REGISTRATION_BANNER))
     time.sleep(3)
