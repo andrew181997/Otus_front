@@ -1,5 +1,5 @@
 from selenium.webdriver.common.by import By
-from opencart.admin_page_elements import AdminPage
+from .admin_page_elements import AdminPage
 import uuid
 class RegPageLocators:
     INPUT_FIRST_NAME = (By.ID, "input-firstname")
@@ -11,12 +11,11 @@ class RegPageLocators:
     BUTTON_REG = (By.XPATH, '//button[contains(text(), "Continue")]')
     COLUMN_RIGHT = (By.ID, "column-right")
     CHECK_REGISTRATION_BANNER = (By.TAG_NAME, "h1")
-
+url = "http://192.168.0.105:8081"
 class RegPage(AdminPage):
-
-
+    url = "http://192.168.0.105:8081"
     def open_page_registartion(self):
-        self.browser.get("http://192.168.0.101:8081/en-gb?route=account/register")
+        self.browser.get(f"{url}/en-gb?route=account/register")
 
     def rigistration_member(self):
         self.wait_and_send_keys(RegPageLocators.INPUT_FIRST_NAME, "Andrew")

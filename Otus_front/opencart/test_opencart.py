@@ -3,14 +3,14 @@ import pytest
 import allure
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from opencart.main_page import MainPageLocators, MainPage
-from opencart.catalog_page_elements import CatalogPageLocators
-from opencart.product_card_element import CardPageLocators
-from opencart.admin_page_elements import AdminPageLocators, AdminPage
-from opencart.registration_page_elements import RegPageLocators, RegPage
+from .catalog_page_elements import CatalogPageLocators
+from .product_card_element import CardPageLocators
+from .admin_page_elements import AdminPageLocators, AdminPage
+from .registration_page_elements import RegPageLocators, RegPage
+from .main_page import MainPageLocators, MainPage
 
 
-
+url = "http://192.168.0.105:8081"
 @pytest.mark.parametrize("element_name, locator", [
     ("Cart Icon", MainPageLocators.CART_ICON),
     ("Logo", MainPageLocators.LOGO),
@@ -22,7 +22,7 @@ from opencart.registration_page_elements import RegPageLocators, RegPage
 @allure.title("Отображение элементов главной страницы")
 def test_check_element_visibility_home(browser, element_name, locator):
     """Проверяет, что основные элементы главной страницы отображаются."""
-    browser.get("http://192.168.0.101:8081/")
+    browser.get(url)
 
     element = WebDriverWait(browser, 3).until(
         EC.visibility_of_element_located(locator),
@@ -40,7 +40,7 @@ def test_check_element_visibility_home(browser, element_name, locator):
 @allure.title("Отображение элементов страницы каталога")
 def test_check_element_visibility_catalog(browser, element_name, locator):
     """Проверяет, что элементы каталога отображаются на странице."""
-    browser.get("http://192.168.0.101:8081/en-gb/catalog/desktops")
+    browser.get(f"{url}/en-gb/catalog/desktops")
 
     element = WebDriverWait(browser, 3).until(
         EC.visibility_of_element_located(locator),
@@ -60,7 +60,7 @@ def test_check_element_visibility_catalog(browser, element_name, locator):
 @allure.title("Отображение элементов карточки товара")
 def test_check_element_visibility_product_card(browser, element_name, locator):
     """Проверяет, что элементы карточки товара отображаются на странице."""
-    browser.get("http://192.168.0.101:8081/en-gb/product/desktops/apple-cinema")
+    browser.get(f"{url}/en-gb/product/desktops/apple-cinema")
 
     element = WebDriverWait(browser, 3).until(
         EC.visibility_of_element_located(locator),
@@ -78,7 +78,7 @@ def test_check_element_visibility_product_card(browser, element_name, locator):
 @allure.title("Отображение элементов страницы логина админа")
 def test_check_element_visibility_admin(browser, element_name, locator):
     """Проверяет, что элементы страницы авторизации админ-панели отображаются."""
-    browser.get("http://192.168.0.101:8081/administration/")
+    browser.get(f"{url}/administration/")
 
     element = WebDriverWait(browser, 3).until(
         EC.visibility_of_element_located(locator),
@@ -100,7 +100,7 @@ def test_check_element_visibility_admin(browser, element_name, locator):
 @allure.title("Отображение элементов страницы регистрации")
 def test_check_element_visibility_reg(browser, element_name, locator):
     """Проверяет, что элементы формы регистрации отображаются на странице."""
-    browser.get("http://192.168.0.101:8081/index.php?route=account/register")
+    browser.get(f"{url}/index.php?route=account/register")
 
     element = WebDriverWait(browser, 3).until(
         EC.visibility_of_element_located(locator),
@@ -110,7 +110,7 @@ def test_check_element_visibility_reg(browser, element_name, locator):
     assert element is not None, f"Element '{element_name}' was not found on the page"
 
 
-admin_url = "http://192.168.0.101:8081/administration/"
+admin_url = "http://192.168.0.105:8081/administration/"
 username = "user"
 password = "bitnami"
 
@@ -122,7 +122,7 @@ def test_login_logout(browser):
         admin_page.open_admin_page()
     with allure.step("Логинимся админом"):
         admin_page.login(username, password)
-    assert admin_page.is_logged_in(), "Логин не выполнен!"
+        assert admin_page.is_logged_in(), "Логин не выполнен!"
     with allure.step("Разлогиниваемся админом"):
         admin_page.logout()
     assert admin_page.is_logged_out(), "Разлогин не выполнен!"

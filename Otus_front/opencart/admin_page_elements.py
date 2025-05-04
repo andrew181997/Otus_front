@@ -4,9 +4,9 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from opencart.main_page import MainPage
+from .main_page import MainPage
 
-
+url = "http://192.168.0.105:8081"
 
 class AdminPageLocators:
     LOGIN_FORM = (By.ID, "form-login")
@@ -39,10 +39,11 @@ class AdminPage(MainPage):
 
     def open_admin_page(self):
         self.logger.info("Открытие страницы администратора")
-        self.browser.get("http://192.168.0.101:8081/administration")
+        self.browser.get(f"{url}/administration")
 
     def login(self, username, password):
         self.logger.info("Попытка входа в админ-панель")
+        time.sleep(3)
         self.wait_and_send_keys(AdminPageLocators.INPUT_USER_NAME, username)
         self.wait_and_send_keys(AdminPageLocators.INPUT_PASSWORD, password)
         self.wait_and_click(AdminPageLocators.BUTTON_LOGIN)
