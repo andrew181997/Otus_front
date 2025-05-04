@@ -1,3 +1,5 @@
+import tempfile
+
 import pytest
 import allure
 from selenium import webdriver
@@ -6,10 +8,10 @@ from selenium.webdriver.firefox.options import Options as FFOptions
 from selenium.webdriver.firefox.service import Service as FFService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
-url = "http://192.168.0.100:8081"
+url = "http://192.168.0.105:8081"
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome", help="Выбор браузера: chrome, firefox, safari")
-    parser.addoption("--url", action="store", default="http://192.168.0.100:8081", help="URL для тестирования")
+    parser.addoption("--url", action="store", default=url, help="URL для тестирования")
     parser.addoption("--headless", action="store_true", default=True, help="Запуск браузера в headless-режиме")
     parser.addoption("--remote", action="store_true", default=False, help="Запуск тестов удаленно через Selenoid")
 
@@ -34,17 +36,16 @@ def browser(request):
                 if headless:
                     options.add_argument("--headless")
                 driver = webdriver.Remote(
-                    command_executor="http://192.168.0.105:4444/wd/hub",
+                    command_executor="http://localhost:4444/wd/hub",
                     options=options
                 )
 
             elif browser_name == "firefox":
                 options = FFOptions()
-
                 if headless:
                     options.add_argument("--headless")
                 driver = webdriver.Remote(
-                    command_executor="http://192.168.0.105:4444/wd/hub",
+                    command_executor="http://192.168.0.101:4444/wd/hub",
                     options=options
                 )
 
@@ -58,14 +59,28 @@ def browser(request):
             # Локальный запуск
             if browser_name == "chrome":
                 options = ChromeOptions()
+                options.add_argument("--no-sandbox")  # Обязательно для Docker
+                options.add_argument("--disable-dev-shm-usage")  # Решает проблемы с памятью
+                options.add_argument("--remote-debugging-port=9222")  # Фиксированный порт
+                options.add_argument("--user-data-dir=/tmp/chrome_profile")  # Уникальный каталог
                 if headless:
                     options.add_argument("--headless")
+                else:
+                    # Для графического режима в контейнере
+                    options.add_argument("--disable-gpu")
+                    options.add_argument("--window-size=1920,1080")
                 driver = webdriver.Chrome(service=ChromiumService(), options=options)
 
             elif browser_name == "firefox":
                 options = FFOptions()
+                options.add_argument("-profile")
+                options.add_argument(tempfile.mkdtemp())
                 if headless:
                     options.add_argument("--headless")
+                else:
+                    # Для графического режима в контейнере
+                    options.add_argument("--disable-gpu")
+                    options.add_argument("--window-size=1920,1080")
                 driver = webdriver.Firefox(service=FFService(), options=options)
 
             elif browser_name == "safari":
