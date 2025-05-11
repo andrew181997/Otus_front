@@ -28,7 +28,7 @@ def browser(request):
             if browser_name == "chrome":
                 options = ChromeOptions()
                 options.set_capability("browserName", "chrome")
-                options.set_capability("browserVersion", "latest")
+                options.set_capability("browserVersion", "128.0")
                 options.set_capability("selenoid:options", {
                     "enableVNC": True,
                     "enableVideo": False
