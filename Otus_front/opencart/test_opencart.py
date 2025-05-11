@@ -3,11 +3,11 @@ import pytest
 import allure
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from catalog_page_elements import CatalogPageLocators
-from product_card_element import CardPageLocators
-from admin_page_elements import AdminPageLocators, AdminPage
-from registration_page_elements import RegPageLocators, RegPage
-from main_page import MainPageLocators, MainPage
+from .catalog_page_elements import CatalogPageLocators
+from .product_card_element import CardPageLocators
+from .admin_page_elements import AdminPageLocators, AdminPage
+from .registration_page_elements import RegPageLocators, RegPage
+from .main_page import MainPageLocators, MainPage
 
 
 url = "http://192.168.0.105:8081"

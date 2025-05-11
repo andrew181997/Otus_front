@@ -1,5 +1,5 @@
 from selenium.webdriver.common.by import By
-from admin_page_elements import AdminPage
+from .admin_page_elements import AdminPage
 import uuid
 class RegPageLocators:
     INPUT_FIRST_NAME = (By.ID, "input-firstname")

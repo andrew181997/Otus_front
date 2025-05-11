@@ -19,6 +19,7 @@ class MainPageLocators:
     CART = (By.XPATH, "//a[text()='shopping cart']")
     FORM_CURRENCY = (By.ID, "form-currency")
     TABLE_CURRENCY = (By.XPATH, '//ul[@class="dropdown-menu show"]')
+    pass
 
 
 class MainPage:
