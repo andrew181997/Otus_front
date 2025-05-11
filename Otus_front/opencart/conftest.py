@@ -1,35 +1,37 @@
-import tempfile
-
 import pytest
-import allure
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromiumService
-from selenium.webdriver.firefox.options import Options as FFOptions
-from selenium.webdriver.firefox.service import Service as FFService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 
 def pytest_addoption(parser):
-    parser.addoption("--selenoid-url", help="Selenoid hub URL")
-    parser.addoption("--app-url", help="Application URL")
-    parser.addoption("--browser", help="Browser name")
-    parser.addoption("--browser-version", help="Browser version")
+    parser.addoption("--selenoid-url", action="store", default="http://localhost:4444/wd/hub")
+    parser.addoption("--app-url", action="store", default="http://localhost:8080")
+    parser.addoption("--browser", action="store", default="chrome")
+    parser.addoption("--browser-version", action="store", default="latest")
 
 
 @pytest.fixture
 def browser(request):
-    options = {
-        "browserName": request.config.getoption("--browser"),
-        "browserVersion": request.config.getoption("--browser-version"),
-        "selenoid:options": {
-            "enableVNC": True,
-            "enableVideo": False
-        }
-    }
+    browser_name = request.config.getoption("--browser")
+
+    if browser_name == "chrome":
+        options = ChromeOptions()
+    elif browser_name == "firefox":
+        options = FirefoxOptions()
+    else:
+        raise ValueError(f"Unsupported browser: {browser_name}")
+
+    options.set_capability("browserName", browser_name)
+    options.set_capability("browserVersion", request.config.getoption("--browser-version"))
+    options.set_capability("selenoid:options", {
+        "enableVNC": True,
+        "enableVideo": False
+    })
 
     driver = webdriver.Remote(
         command_executor=request.config.getoption("--selenoid-url"),
-        desired_capabilities=options
+        options=options  # Используем options вместо desired_capabilities
     )
 
     driver.get(request.config.getoption("--app-url"))
