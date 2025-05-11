@@ -36,7 +36,7 @@ def browser(request):
                 if headless:
                     options.add_argument("--headless")
                 driver = webdriver.Remote(
-                    command_executor="http://localhost:4444/wd/hub",
+                    command_executor="http://192.168.0.105:4444/wd/hub/",
                     options=options
                 )
 
@@ -45,7 +45,7 @@ def browser(request):
                 if headless:
                     options.add_argument("--headless")
                 driver = webdriver.Remote(
-                    command_executor="http://192.168.0.101:4444/wd/hub",
+                    command_executor="http://192.168.0.105:4444/wd/hub/",
                     options=options
                 )
 
