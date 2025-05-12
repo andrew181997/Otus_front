@@ -15,7 +15,7 @@ class MainPageLocators:
     FOOTER = (By.TAG_NAME, "footer")
     CAROUSEL_BANNER = (By.ID, "carousel-banner-1")
     SEARCH = (By.ID, "search")
-    ADD_TO_CART = (By.XPATH, '//button[@formaction="http://192.168.0.105/:8081/en-gb?route=checkout/cart.add"]')
+    ADD_TO_CART = (By.XPATH, '//button[@formaction="http://192.168.0.102/:8081/en-gb?route=checkout/cart.add"]')
     CART = (By.XPATH, "//a[text()='shopping cart']")
     FORM_CURRENCY = (By.ID, "form-currency")
     TABLE_CURRENCY = (By.XPATH, '//ul[@class="dropdown-menu show"]')
@@ -89,7 +89,7 @@ class MainPage:
         """Переходит в корзину."""
         self.logger.info("Переходим в корзину.")
         button_cart = WebDriverWait(self.browser, 2).until(
-            EC.element_to_be_clickable((By.XPATH, '//a[@href="http://192.168.0.105:8081/en-gb?route=checkout/cart"]'))
+            EC.element_to_be_clickable((By.XPATH, '//a[@href="http://192.168.0.102:8081/en-gb?route=checkout/cart"]'))
         )
         button_cart.click()
         self.logger.info("Открыта корзина.")
