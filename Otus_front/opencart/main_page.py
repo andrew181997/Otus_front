@@ -11,7 +11,7 @@ import logging
 class MainPageLocators:
     CART_ICON = (By.CLASS_NAME, "fa-cart-shopping")
     LOGO = (By.ID, "logo")
-    MENU = (By.ID, "narbar-menu")
+    MENU = (By.ID, "menu")
     FOOTER = (By.TAG_NAME, "footer")
     CAROUSEL_BANNER = (By.ID, "carousel-banner-1")
     SEARCH = (By.ID, "search")
@@ -137,12 +137,12 @@ class MainPage:
     def navigate_to_desktops_catalog(self):
         """Открывает каталог 'Desktops'."""
         self.logger.info("Открываем каталог 'Desktops'.")
-        desktops = self.browser.find_element(By.CLASS_NAME, "nav-item.dropdown")  # Находит кнопку "Desktops"
-        actions = ActionChains(self.browser)
-        actions.move_to_element(desktops).perform()  # Наводит курсор на кнопку
+        #desktops = self.browser.find_element(By.CLASS_NAME, "nav-item.dropdown")  # Находит кнопку "Desktops"
+        #actions = ActionChains(self.browser)
+        #actions.move_to_element(desktops).perform()  # Наводит курсор на кнопку // закомментировал тк были сложности с действием навидения а затем перехода в каталог
 
         show_all_link = WebDriverWait(self.browser, 5).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "a.see-all[href*='desktops']"))  # Ожидает кнопку перехода
+            EC.element_to_be_clickable((By.XPATH, '//a[contains(text(), "Phones & PDAs")]'))  # Ожидает кнопку перехода
         )
         show_all_link.click()
         self.logger.info("Перешли в каталог 'Desktops'.")

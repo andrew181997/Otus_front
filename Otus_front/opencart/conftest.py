@@ -6,36 +6,54 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 
 def pytest_addoption(parser):
-    parser.addoption("--selenoid-url", action="store", default="http://localhost:4444/wd/hub")
-    parser.addoption("--app-url", action="store", default="http://localhost:8080")
+    parser.addoption("--selenoid-url", action="store", default="http://192.168.0.105:4444/wd/hub")
+    parser.addoption("--app-url", action="store", default="http://192.168.0.105:8081")
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--browser-version", action="store", default="latest")
-
+    parser.addoption("--browser-version", action="store", default="128.0")
+    parser.addoption("--local", action="store_true", help="Run tests locally instead of Selenoid")
 
 @pytest.fixture
 def browser(request):
     browser_name = request.config.getoption("--browser")
+    is_local = request.config.getoption("--local")
 
-    if browser_name == "chrome":
-        options = ChromeOptions()
-    elif browser_name == "firefox":
-        options = FirefoxOptions()
+    if is_local:
+        # Локальный запуск браузера
+        if browser_name == "chrome":
+            options = ChromeOptions()
+            # Добавьте нужные опции для Chrome
+            # options.add_argument("--headless")  # для headless режима
+            driver = webdriver.Chrome(options=options)
+        elif browser_name == "firefox":
+            options = FirefoxOptions()
+            # Добавьте нужные опции для Firefox
+            # options.add_argument("-headless")  # для headless режима
+            driver = webdriver.Firefox(options=options)
+        else:
+            raise ValueError(f"Unsupported browser: {browser_name}")
     else:
-        raise ValueError(f"Unsupported browser: {browser_name}")
+        # Удалённый запуск через Selenoid
+        if browser_name == "chrome":
+            options = ChromeOptions()
+        elif browser_name == "firefox":
+            options = FirefoxOptions()
+        else:
+            raise ValueError(f"Unsupported browser: {browser_name}")
 
-    options.set_capability("browserName", browser_name)
-    options.set_capability("browserVersion", request.config.getoption("--browser-version"))
-    options.set_capability("selenoid:options", {
-        "enableVNC": True,
-        "enableVideo": True
-    })
+        options.set_capability("browserName", browser_name)
+        options.set_capability("browserVersion", request.config.getoption("--browser-version"))
+        options.set_capability("selenoid:options", {
+            "enableVNC": True,
+            "enableVideo": True
+        })
 
-    driver = webdriver.Remote(
-        command_executor=request.config.getoption("--selenoid-url"),
-        options=options  # Используем options вместо desired_capabilities
-    )
+        driver = webdriver.Remote(
+            command_executor=request.config.getoption("--selenoid-url"),
+            options=options
+        )
 
     driver.get(request.config.getoption("--app-url"))
+    driver.maximize_window()  # Опционально: максимизировать окно
     yield driver
     driver.quit()
 

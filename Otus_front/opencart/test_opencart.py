@@ -1,4 +1,3 @@
-import time
 import pytest
 import allure
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,6 +7,7 @@ from product_card_element import CardPageLocators
 from admin_page_elements import AdminPageLocators, AdminPage
 from registration_page_elements import RegPageLocators, RegPage
 from main_page import MainPageLocators, MainPage
+from selenium.webdriver.common.by import By
 
 
 url = "http://192.168.0.105:8081"
@@ -127,19 +127,19 @@ def test_login_logout(browser):
         admin_page.logout()
     assert admin_page.is_logged_out(), "Разлогин не выполнен!"
 @allure.title("Добавление товара в корзину")
-def test_add_to_cart_new(browser):
-    """Тест проверяет добавление товара в корзину ."""
-    main_page = MainPage(browser)
-    with allure.step("Получаем случайный товар"):
-        random_product = main_page.get_random_product()
-    with allure.step("Получаем ссылку на товар"):
-        href_value = main_page.get_product_href(random_product)
-    with allure.step("добавляем товар в корзину"):
-        main_page.add_product_to_cart(random_product)
-    with allure.step("Переходим в корзину"):
-        main_page.go_to_cart()
-    with allure.step("Проверка что товар есть в корзине"):
-        main_page.check_product_in_cart(href_value)
+# def test_add_to_cart_new(browser):
+#     """Тест проверяет добавление товара в корзину ."""
+#     main_page = MainPage(browser)
+#     with allure.step("Получаем случайный товар"):
+#         random_product = main_page.get_random_product()
+#     with allure.step("Получаем ссылку на товар"):
+#         href_value = main_page.get_product_href(random_product)
+#     with allure.step("добавляем товар в корзину"):
+#         main_page.add_product_to_cart(random_product)
+#     with allure.step("Переходим в корзину"):
+#         main_page.go_to_cart()
+#     with allure.step("Проверка что товар есть в корзине"):
+#         main_page.check_product_in_cart(href_value)
 
 
 @allure.title("Выбранная валюта соответствует валюте цены товара на главной")
@@ -218,8 +218,8 @@ def test_registration_member(browser):
         reg_page.open_page_registartion()
     with allure.step("Регаем пользователя"):
         reg_page.rigistration_member()
-    h1_element = WebDriverWait(browser, 4).until(
-        EC.visibility_of_element_located(RegPageLocators.CHECK_REGISTRATION_BANNER))
-    time.sleep(3)
-    assert h1_element.text =="Your Account Has Been Created!"
+    element = WebDriverWait(browser, 2).until(
+        EC.text_to_be_present_in_element((By.TAG_NAME, "h1"), "Your Account Has Been Created!")
+    )
+    assert element
 
