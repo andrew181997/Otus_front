@@ -10,7 +10,7 @@ from registration_page_elements import RegPageLocators, RegPage
 from main_page import MainPageLocators, MainPage
 
 
-url = "http://192.168.0.102:8081"
+url = "http://192.168.0.105:8081"
 @pytest.mark.parametrize("element_name, locator", [
     ("Cart Icon", MainPageLocators.CART_ICON),
     ("Logo", MainPageLocators.LOGO),
@@ -110,7 +110,7 @@ def test_check_element_visibility_reg(browser, element_name, locator):
     assert element is not None, f"Element '{element_name}' was not found on the page"
 
 
-admin_url = "http://192.168.0.102:8081/administration/"
+admin_url = "http://192.168.0.105:8081/administration/"
 username = "user"
 password = "bitnami"
 

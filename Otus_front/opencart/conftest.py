@@ -27,7 +27,7 @@ def browser(request):
     options.set_capability("browserVersion", request.config.getoption("--browser-version"))
     options.set_capability("selenoid:options", {
         "enableVNC": True,
-        "enableVideo": False
+        "enableVideo": True
     })
 
     driver = webdriver.Remote(

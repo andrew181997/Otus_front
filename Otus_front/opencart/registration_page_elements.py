@@ -11,9 +11,9 @@ class RegPageLocators:
     BUTTON_REG = (By.XPATH, '//button[contains(text(), "Continue")]')
     COLUMN_RIGHT = (By.ID, "column-right")
     CHECK_REGISTRATION_BANNER = (By.TAG_NAME, "h1")
-url = "http://192.168.0.102:8081"
+url = "http://192.168.0.105:8081"
 class RegPage(AdminPage):
-    url = "http://192.168.0.102:8081"
+    url = "http://192.168.0.105:8081"
     def open_page_registartion(self):
         self.browser.get(f"{url}/en-gb?route=account/register")
 
