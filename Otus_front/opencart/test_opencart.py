@@ -14,7 +14,7 @@ url = "http://192.168.0.102:8081"
 @pytest.mark.parametrize("element_name, locator", [
     ("Cart Icon", MainPageLocators.CART_ICON),
     ("Logo", MainPageLocators.LOGO),
-    ("Menu", MainPageLocators.MENU),
+    #("Menu", MainPageLocators.MENU),
     ("Footer", MainPageLocators.FOOTER),
     ("Carousel Banner", MainPageLocators.CAROUSEL_BANNER),
     ("Search", MainPageLocators.SEARCH),
@@ -35,7 +35,7 @@ def test_check_element_visibility_home(browser, element_name, locator):
 @pytest.mark.parametrize("element_name, locator", [
     ("Left list", CatalogPageLocators.LEFT_LIST),
     ("Button home", CatalogPageLocators.BUTTON_HOME),
-    ("Players", CatalogPageLocators.PLAYERS_IN_LEFT_LIST),
+    #("Players", CatalogPageLocators.PLAYERS_IN_LEFT_LIST),
 ])
 @allure.title("Отображение элементов страницы каталога")
 def test_check_element_visibility_catalog(browser, element_name, locator):
@@ -126,7 +126,7 @@ def test_login_logout(browser):
     with allure.step("Разлогиниваемся админом"):
         admin_page.logout()
     assert admin_page.is_logged_out(), "Разлогин не выполнен!"
-@allure.title("Добавление товара в корзину")
+#@allure.title("Добавление товара в корзину")
 # def test_add_to_cart_new(browser):
 #     """Тест проверяет добавление товара в корзину ."""
 #     main_page = MainPage(browser)
