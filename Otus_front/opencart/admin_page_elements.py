@@ -4,9 +4,9 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from main_page import MainPage
+from .main_page import MainPage
 
-url = "http://192.168.0.105:8081"
+url = "http://192.168.0.102:8081"
 
 class AdminPageLocators:
     LOGIN_FORM = (By.ID, "form-login")

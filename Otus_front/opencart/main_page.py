@@ -89,7 +89,7 @@ class MainPage:
         """Переходит в корзину."""
         self.logger.info("Переходим в корзину.")
         button_cart = WebDriverWait(self.browser, 2).until(
-            EC.element_to_be_clickable((By.XPATH, '//a[@href="http://192.168.0.105:8081/en-gb?route=checkout/cart"]'))
+            EC.element_to_be_clickable((By.XPATH, '//a[@href="http://192.168.0.102:8081/en-gb?route=checkout/cart"]'))
         )
         button_cart.click()
         self.logger.info("Открыта корзина.")

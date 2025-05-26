@@ -6,8 +6,8 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 
 def pytest_addoption(parser):
-    parser.addoption("--selenoid-url", action="store", default="http://192.168.0.105:4444/wd/hub")
-    parser.addoption("--app-url", action="store", default="http://192.168.0.105:8081")
+    parser.addoption("--selenoid-url", action="store", default="http://host.docker.internal:4444/wd/hub")
+    parser.addoption("--app-url", action="store", default="http://192.168.0.102:8081")
     parser.addoption("--browser", action="store", default="chrome")
     parser.addoption("--browser-version", action="store", default="128.0")
     parser.addoption("--local", action="store_true", help="Run tests locally instead of Selenoid")
