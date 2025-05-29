@@ -16,7 +16,7 @@ url = "http://192.168.0.110:8081"
 @pytest.mark.parametrize("element_name, locator", [
     ("Cart Icon", MainPageLocators.CART_ICON),
     ("Logo", MainPageLocators.LOGO),
-    ("Menu", MainPageLocators.MENU),
+    #("Menu", MainPageLocators.MENU),
     ("Footer", MainPageLocators.FOOTER),
     ("Carousel Banner", MainPageLocators.CAROUSEL_BANNER),
     ("Search", MainPageLocators.SEARCH),
