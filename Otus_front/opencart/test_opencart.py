@@ -37,7 +37,7 @@ def test_check_element_visibility_home(browser, element_name, locator):
 @pytest.mark.parametrize("element_name, locator", [
     ("Left list", CatalogPageLocators.LEFT_LIST),
     ("Button home", CatalogPageLocators.BUTTON_HOME),
-    #("Players", CatalogPageLocators.PLAYERS_IN_LEFT_LIST),
+    ("Players", CatalogPageLocators.PLAYERS_IN_LEFT_LIST),
 ])
 @allure.title("Отображение элементов страницы каталога")
 def test_check_element_visibility_catalog(browser, element_name, locator):
