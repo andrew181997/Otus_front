@@ -6,6 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 import logging
 
+from Otus_front.opencart.conftest import browser
 
 
 class MainPageLocators:
@@ -88,10 +89,14 @@ class MainPage:
     def go_to_cart(self):
         """Переходит в корзину."""
         self.logger.info("Переходим в корзину.")
-        button_cart = WebDriverWait(self.browser, 2).until(
-            EC.element_to_be_clickable((By.XPATH, '//a[@href="http://192.168.0.102:8081/en-gb?route=checkout/cart"]'))
+        alert_element = WebDriverWait(self.browser, 3).until(
+            EC.element_to_be_clickable((By.ID, 'alert'))
         )
-        button_cart.click()
+        link = alert_element.find_element("xpath",".//a[contains(@href, 'http://192.168.0.110:8081/en-gb?route=checkout/cart')]")
+        # button_cart = WebDriverWait(self.browser, 3).until(
+        #     EC.element_to_be_clickable((By.XPATH, '//a[@href="http://192.168.0.110:8081/en-gb?route=checkout/cart"]'))
+        # )
+        link.click()
         self.logger.info("Открыта корзина.")
 
     def check_product_in_cart(self, href_value):

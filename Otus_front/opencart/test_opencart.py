@@ -1,3 +1,5 @@
+import time
+
 import pytest
 import allure
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,11 +12,11 @@ from main_page import MainPageLocators, MainPage
 from selenium.webdriver.common.by import By
 
 
-url = "http://192.168.0.102:8081"
+url = "http://192.168.0.110:8081"
 @pytest.mark.parametrize("element_name, locator", [
     ("Cart Icon", MainPageLocators.CART_ICON),
     ("Logo", MainPageLocators.LOGO),
-    #("Menu", MainPageLocators.MENU),
+    ("Menu", MainPageLocators.MENU),
     ("Footer", MainPageLocators.FOOTER),
     ("Carousel Banner", MainPageLocators.CAROUSEL_BANNER),
     ("Search", MainPageLocators.SEARCH),
@@ -110,7 +112,7 @@ def test_check_element_visibility_reg(browser, element_name, locator):
     assert element is not None, f"Element '{element_name}' was not found on the page"
 
 
-admin_url = "http://192.168.0.102:8081/administration/"
+admin_url = "http://192.168.0.110:8081/administration/"
 username = "user"
 password = "bitnami"
 
@@ -126,20 +128,20 @@ def test_login_logout(browser):
     with allure.step("Разлогиниваемся админом"):
         admin_page.logout()
     assert admin_page.is_logged_out(), "Разлогин не выполнен!"
-#@allure.title("Добавление товара в корзину")
-# def test_add_to_cart_new(browser):
-#     """Тест проверяет добавление товара в корзину ."""
-#     main_page = MainPage(browser)
-#     with allure.step("Получаем случайный товар"):
-#         random_product = main_page.get_random_product()
-#     with allure.step("Получаем ссылку на товар"):
-#         href_value = main_page.get_product_href(random_product)
-#     with allure.step("добавляем товар в корзину"):
-#         main_page.add_product_to_cart(random_product)
-#     with allure.step("Переходим в корзину"):
-#         main_page.go_to_cart()
-#     with allure.step("Проверка что товар есть в корзине"):
-#         main_page.check_product_in_cart(href_value)
+@allure.title("Добавление товара в корзину")
+def test_add_to_cart_new(browser):
+    """Тест проверяет добавление товара в корзину ."""
+    main_page = MainPage(browser)
+    with allure.step("Получаем случайный товар"):
+        random_product = main_page.get_random_product()
+    with allure.step("Получаем ссылку на товар"):
+        href_value = main_page.get_product_href(random_product)
+    with allure.step("добавляем товар в корзину"):
+        main_page.add_product_to_cart(random_product)
+    with allure.step("Переходим в корзину"):
+        main_page.go_to_cart()
+    with allure.step("Проверка что товар есть в корзине"):
+        main_page.check_product_in_cart(href_value)
 
 
 @allure.title("Выбранная валюта соответствует валюте цены товара на главной")
@@ -148,8 +150,10 @@ def test_change_currency(browser):
     main_page = MainPage(browser)
     with allure.step("Выбираем случайную валюту"):
         selected_currency = main_page.select_random_currency()
+        time.sleep(1)
     with allure.step("Получаем цену и валюту товара"):
         price = main_page.get_product_price()
+        time.sleep(1)
     if selected_currency == "€":
         assert price[-1] == selected_currency,f"Ожидаемая валюта: {selected_currency}, фактическая валюта: {price[0]}"
     else:
