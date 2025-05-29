@@ -12,7 +12,7 @@ from Otus_front.opencart.conftest import browser
 class MainPageLocators:
     CART_ICON = (By.CLASS_NAME, "fa-cart-shopping")
     LOGO = (By.ID, "logo")
-    MENU = (By.CLASS_NAME, "fa-solid.fa-bars")
+    MENU = (By.CLASS_NAME, "nevbar-toggler")
     FOOTER = (By.TAG_NAME, "footer")
     CAROUSEL_BANNER = (By.ID, "carousel-banner-1")
     SEARCH = (By.ID, "search")
